@@ -12,4 +12,4 @@ Quem conseguir desenrolar o projeto primeiro, faz o merge request para master
 
 # Conclusao
 
-Ao final do projeto, vamos clona este repositorio para o repositorio de cada participante.
+Ao final do projeto, vamos clonar este repositorio para o repositorio de cada participante.
