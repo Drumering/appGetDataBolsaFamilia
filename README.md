@@ -3,7 +3,7 @@
 - Clonar o repositorio
   - git clone endereco-git
 - Criar a sua branch
-  - git checkout -b nome-da-sua-branch (Seguir o padrao **Dev---seuNome**)
+  - git checkout -b nome-da-sua-branch (Seguir o padrao **Dev---Seu-Nome**)
 - Push para a sua branch
   - git push -u origin nome-da-sua-branch
 ## Andamento do projeto
