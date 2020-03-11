@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void generateRequest(String url){
-        url = url + "mesAno=201811&codigoIbge=4106902&pagina=1";
+        //url = url + "mesAno=201811&codigoIbge=4106902&pagina=1";
         String endpoint = url;
 
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, endpoint, null, new Response.Listener<JSONObject>() {
@@ -83,8 +83,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void carregarDados(){
-        //String endpoint = "https://pokeapi.co/api/v2/pokemon";
-        String endpoint = "http://www.transparencia.gov.br/api-de-dados/bolsa-familia-por-municipio?";
+        String endpoint = "https://pokeapi.co/api/v2/pokemon";
+        //String endpoint = "http://www.transparencia.gov.br/api-de-dados/bolsa-familia-por-municipio?";
 
         generateRequest(endpoint);
     }
