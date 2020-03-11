@@ -8,7 +8,7 @@
   - git push -u origin nome-da-sua-branch
 ## Andamento do projeto
 Quem conseguir desenrolar o projeto primeiro, faz o merge request para master
-  - Seguir os passos [estes](https://docs.plm.automation.siemens.com/content/polarion/19.1/help/en_US/user_and_administration_help/user_guide/work_items/create_and_edit_work_items/create_and_view_merge_requests.html) passos;
+  - Seguir os passos [estes](https://docs.plm.automation.siemens.com/content/polarion/19.1/help/en_US/user_and_administration_help/user_guide/work_items/create_and_edit_work_items/create_and_view_merge_requests.html) passos a partir do passo 3;
 
 # Conclusao
 
