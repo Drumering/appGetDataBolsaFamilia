@@ -25,11 +25,28 @@
         android:layout_marginTop="3dp"
         />
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:text="Ano da Consulta"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <EditText
+        android:id="@+id/editYear"
+        android:inputType="number"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dp"
+        android:hint="Digite o ano" />
+
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="btnCarregarEvent"
-        android:text="Carregar"
+        android:text="Consultar Valores Bolsa Familia"
+        android:id="@+id/consultarValores"
         />
 
     <Button
