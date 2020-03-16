@@ -1,12 +1,12 @@
 package com.example.exerciciosandroidopet;
 
-import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void generateRequest(String url) {
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONObject>() {
 
             @Override
@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
             public void onErrorResponse(VolleyError error) { }
         });
 
-        APISingleton.getInstance(this).addToRequestQueue(request);
+        APISingleton.getInstance(this).addToRequestQueue(jsonObjectRequest);
     }
 
     private void generateRequestIBGE(String url) {
@@ -113,7 +113,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void carregarDados() {
-        String endpoint = "http://www.transparencia.gov.br/api-de-dados/bolsa-familia-por-municipio?";
+        String dataConsulta = "201901";
+        String endpoint = String.format(
+                "http://www.transparencia.gov.br/api-de-dados/bolsa-familia-por-municipio?mesAno=%s&codigoIbge=%s&pagina=1",
+                dataConsulta, editMunicipio.getText().toString()
+        );
+
         generateRequest(endpoint);
     }
 
