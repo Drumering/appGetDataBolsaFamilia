@@ -8,22 +8,47 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <Button
-        android:onClick="btnCarregarEvent"
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Carregar"/>
+        android:layout_marginTop="5dp"
+        android:text="App Consulta Bolsa Familia por Municipio"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/editMunicipio"
+        android:hint="Digite o codigo IBGE ou o nome do Municipio"
+        android:layout_marginTop="3dp"
+        />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="btnCarregarEvent"
+        android:text="Carregar"
+        />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="btnCarregarIBGEEvent"
+        android:text="Consultar Codigo IBGE"
+        />
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
         <TextView
             android:id="@+id/textName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="24sp"
             android:textAlignment="center"
-            />
+            android:textSize="24sp" />
 
     </ScrollView>
 

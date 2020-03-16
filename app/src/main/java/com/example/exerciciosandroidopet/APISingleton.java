@@ -2,7 +2,6 @@ package com.example.exerciciosandroidopet;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.media.Image;
 import android.util.LruCache;
 
 import com.android.volley.Request;
@@ -11,19 +10,20 @@ import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
 
 public class APISingleton {
+
     private static APISingleton instance;
     private RequestQueue requestQueue;
     private ImageLoader imageLoader;
     private static Context ctx;
 
-    private APISingleton(Context context){
+    private APISingleton(Context context) {
         ctx = context;
-
         requestQueue = getRequestQueue();
 
         imageLoader = new ImageLoader(requestQueue, new ImageLoader.ImageCache() {
 
             private final LruCache<String,Bitmap> cache = new LruCache<>(20);
+
             @Override
             public Bitmap getBitmap(String url) {
                 return cache.get(url);
@@ -37,14 +37,14 @@ public class APISingleton {
     }
 
     public static synchronized APISingleton getInstance(Context context){
-        if(instance==null){
+        if (instance == null) {
             instance = new APISingleton(context);
         }
         return instance;
     }
 
     private RequestQueue getRequestQueue() {
-        if(requestQueue == null){
+        if (requestQueue == null) {
             requestQueue = Volley.newRequestQueue(ctx.getApplicationContext());
         }
         return requestQueue;
