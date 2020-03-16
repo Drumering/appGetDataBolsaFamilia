@@ -34,6 +34,18 @@ public class MainActivity extends AppCompatActivity {
         editYear = findViewById(R.id.editYear);
     }
 
+    public void btnCarregarIBGEEvent(View v) {
+        carregarCodigoIBGE();
+    }
+
+    private void carregarCodigoIBGE() {
+        String cidade = editMunicipio.getText().toString().replace(' ', '-');
+
+        String endpoint = "https://servicodados.ibge.gov.br/api/v1/localidades/municipios/" +
+                cidade;
+        generateRequest(endpoint, 1);
+    }
+
     public void btnCarregarEvent(View v){
         carregarDados(v);
     }
@@ -123,17 +135,5 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return mes;
-    }
-
-    public void btnCarregarIBGEEvent(View v) {
-        carregarCodigoIBGE();
-    }
-
-    private void carregarCodigoIBGE() {
-        String cidade = editMunicipio.getText().toString().replace(' ', '-');
-
-        String endpoint = "https://servicodados.ibge.gov.br/api/v1/localidades/municipios/" +
-                cidade;
-        generateRequest(endpoint, 1);
     }
 }
