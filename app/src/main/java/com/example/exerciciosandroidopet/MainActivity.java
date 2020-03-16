@@ -19,6 +19,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import static com.example.exerciciosandroidopet.Constants.API_DADOS_SITE;
+import static com.example.exerciciosandroidopet.Constants.IBGE_SITE;
+import static com.example.exerciciosandroidopet.Constants.MGS_ERRO_ANO_VAZIO;
+import static com.example.exerciciosandroidopet.Constants.MGS_ERRO_CONSULTA;
+
 public class MainActivity extends AppCompatActivity {
 
     private TextView textView;
@@ -41,8 +46,7 @@ public class MainActivity extends AppCompatActivity {
     private void carregarCodigoIBGE() {
         String cidade = editMunicipio.getText().toString().replace(' ', '-');
 
-        String endpoint = "https://servicodados.ibge.gov.br/api/v1/localidades/municipios/" +
-                cidade;
+        String endpoint = IBGE_SITE + cidade;
         generateRequest(endpoint, 1);
     }
 
@@ -58,8 +62,7 @@ public class MainActivity extends AppCompatActivity {
                 String mes = validarMes(i);
 
                 String dataConsulta = editYear.getText().toString() + mes;
-                String endpoint = String.format(
-                        "http://www.transparencia.gov.br/api-de-dados/bolsa-familia-por-municipio?mesAno=%s&codigoIbge=%s&pagina=1",
+                String endpoint = String.format(API_DADOS_SITE + "?mesAno=%s&codigoIbge=%s&pagina=1",
                         dataConsulta, codigoIbge
                 );
 
@@ -114,9 +117,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private boolean validarDados(View view, String codigoIbge) {
-        if (!TextUtils.isDigitsOnly(codigoIbge)) {
-            Snackbar snackBar = Snackbar.make(view, "Favor preencher os campos corretamente",
-                    Snackbar.LENGTH_SHORT);
+        boolean municipioVazio = editMunicipio.getText().toString().trim().equals("");
+        boolean anoVazio = editYear.getText().toString().trim().equals("");
+
+        if (!TextUtils.isDigitsOnly(codigoIbge) || municipioVazio) {
+            Snackbar snackBar = Snackbar.make(view, MGS_ERRO_CONSULTA, Snackbar.LENGTH_SHORT);
+            snackBar.show();
+            return false;
+
+        } else if (anoVazio) {
+            Snackbar snackBar = Snackbar.make(view, MGS_ERRO_ANO_VAZIO, Snackbar.LENGTH_SHORT);
             snackBar.show();
             return false;
 
