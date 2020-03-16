@@ -1,6 +1,7 @@
 package com.example.exerciciosandroidopet;
 
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -12,6 +13,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.google.android.material.snackbar.Snackbar;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -37,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void btnCarregarEvent(View v){
-        carregarDados();
+        carregarDados(v);
     }
 
     public void btnCarregarIBGEEvent(View v) {
@@ -112,14 +114,25 @@ public class MainActivity extends AppCompatActivity {
         textView.setText(names_str.toString());
     }
 
-    private void carregarDados() {
-        String dataConsulta = "201901";
-        String endpoint = String.format(
-                "http://www.transparencia.gov.br/api-de-dados/bolsa-familia-por-municipio?mesAno=%s&codigoIbge=%s&pagina=1",
-                dataConsulta, editMunicipio.getText().toString()
-        );
+    private void carregarDados(View view) {
+        String codigoIbge = editMunicipio.getText().toString();
+        validarDados(view, codigoIbge);
+    }
 
-        generateRequest(endpoint);
+    private void validarDados(View view, String codigoIbge) {
+        if (!TextUtils.isDigitsOnly(codigoIbge)) {
+            Snackbar snackBar = Snackbar.make(view, "Favor buscar codigo IBGE da Cidade", Snackbar.LENGTH_SHORT);
+            snackBar.show();
+
+        } else {
+            String dataConsulta = "201901";
+            String endpoint = String.format(
+                    "http://www.transparencia.gov.br/api-de-dados/bolsa-familia-por-municipio?mesAno=%s&codigoIbge=%s&pagina=1",
+                    dataConsulta, codigoIbge
+            );
+
+            generateRequest(endpoint);
+        }
     }
 
     private void carregarCodigoIBGE() {
