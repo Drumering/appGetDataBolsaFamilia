@@ -116,15 +116,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void carregarDados(View view) {
         String codigoIbge = editMunicipio.getText().toString();
-        validarDados(view, codigoIbge);
-    }
 
-    private void validarDados(View view, String codigoIbge) {
-        if (!TextUtils.isDigitsOnly(codigoIbge)) {
-            Snackbar snackBar = Snackbar.make(view, "Favor buscar codigo IBGE da Cidade", Snackbar.LENGTH_SHORT);
-            snackBar.show();
-
-        } else {
+        if (validarDados(view, codigoIbge)) {
             String dataConsulta = "201901";
             String endpoint = String.format(
                     "http://www.transparencia.gov.br/api-de-dados/bolsa-familia-por-municipio?mesAno=%s&codigoIbge=%s&pagina=1",
@@ -132,6 +125,16 @@ public class MainActivity extends AppCompatActivity {
             );
 
             generateRequest(endpoint);
+        }
+    }
+
+    private boolean validarDados(View view, String codigoIbge) {
+        if (!TextUtils.isDigitsOnly(codigoIbge)) {
+            Snackbar snackBar = Snackbar.make(view, "Favor buscar codigo IBGE da Cidade", Snackbar.LENGTH_SHORT);
+            snackBar.show();
+            return false;
+        } else {
+            return true;
         }
     }
 
