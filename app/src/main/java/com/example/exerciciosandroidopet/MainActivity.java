@@ -1,5 +1,6 @@
 package com.example.exerciciosandroidopet;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -28,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
 
     private TextView cidade, estado, total, media, maiorValor, menorValor;
     private EditText editMunicipio, editYear;
+
     private Double valorTotal, valorMedia, valorMaior, valorMenor;
     private String nomeCidade, UF;
 
@@ -55,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
         String cidade = editMunicipio.getText().toString().replace(' ', '-');
 
         String endpoint = IBGE_SITE + cidade;
-        generateRequest(endpoint, 1);
+        gerarRequest(endpoint, 1);
     }
 
     public void btnCarregarEvent(View v){
@@ -66,12 +68,38 @@ public class MainActivity extends AppCompatActivity {
         String codigoIbge = editMunicipio.getText().toString();
 
         if (validarDados(view, codigoIbge)) {
-            limparValoresAntigos();
-            loopRequest(codigoIbge);
+            resetarValoresView();
+            gerarRequestAnual(codigoIbge);
         }
     }
 
-    private void loopRequest(String codigoIbge) {
+    private boolean validarDados(View view, String codigoIbge) {
+        boolean municipioVazio = editMunicipio.getText().toString().trim().equals("");
+        boolean anoVazio = editYear.getText().toString().trim().equals("");
+
+        if (!TextUtils.isDigitsOnly(codigoIbge) || municipioVazio) {
+            Snackbar snackBar = Snackbar.make(view, MGS_ERRO_CONSULTA, Snackbar.LENGTH_SHORT);
+            snackBar.show();
+            return false;
+
+        } else if (anoVazio) {
+            Snackbar snackBar = Snackbar.make(view, MGS_ERRO_ANO_VAZIO, Snackbar.LENGTH_SHORT);
+            snackBar.show();
+            return false;
+
+        } else {
+            return true;
+        }
+    }
+
+    private void resetarValoresView() {
+        valorTotal = 0.0;
+        valorMedia = 0.0;
+        valorMaior = -9999999999.0;
+        valorMenor = 99999999999.0;
+    }
+
+    private void gerarRequestAnual(String codigoIbge) {
         for (int i = 1; i <= 12; i++) {
             String mes = validarMes(i);
 
@@ -80,11 +108,23 @@ public class MainActivity extends AppCompatActivity {
                     dataConsulta, codigoIbge
             );
 
-            generateRequest(endpoint, 0);
+            gerarRequest(endpoint, 0);
         }
     }
 
-    private void generateRequest(String url, int operacao) {
+    private String validarMes(int i) {
+        String mes;
+
+        if (i < 10) {
+            mes = "0" + i;
+        } else {
+            mes = Integer.toString(i);
+        }
+
+        return mes;
+    }
+
+    private void gerarRequest(String url, int operacao) {
         if (operacao == 0) {
             JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(Request.Method.GET, url, null,
                     new Response.Listener<JSONArray>() {
@@ -93,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
                         public void onResponse(JSONArray response) {
                             try {
                                 JSONObject dataObject = response.getJSONObject(0);
-                                buscarValoresObjJson(dataObject);
+                                extrairValoresDataObject(dataObject);
                                 setTextosView();
 
                             } catch (JSONException e) {
@@ -130,7 +170,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void buscarValoresObjJson(JSONObject dataObject) throws JSONException {
+    private void extrairValoresDataObject(JSONObject dataObject) throws JSONException {
         valorTotal += Double.parseDouble(dataObject.getString("valor"));
         valorMedia += Double.parseDouble(dataObject.getString("quantidadeBeneficiados"));
         nomeCidade = dataObject.getJSONObject("municipio").getString("nomeIBGE");
@@ -145,25 +185,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private boolean validarDados(View view, String codigoIbge) {
-        boolean municipioVazio = editMunicipio.getText().toString().trim().equals("");
-        boolean anoVazio = editYear.getText().toString().trim().equals("");
-
-        if (!TextUtils.isDigitsOnly(codigoIbge) || municipioVazio) {
-            Snackbar snackBar = Snackbar.make(view, MGS_ERRO_CONSULTA, Snackbar.LENGTH_SHORT);
-            snackBar.show();
-            return false;
-
-        } else if (anoVazio) {
-            Snackbar snackBar = Snackbar.make(view, MGS_ERRO_ANO_VAZIO, Snackbar.LENGTH_SHORT);
-            snackBar.show();
-            return false;
-
-        } else {
-            return true;
-        }
-    }
-
+    @SuppressLint("DefaultLocale")
     private void setTextosView() {
         cidade.setText(nomeCidade);
         estado.setText(UF);
@@ -171,24 +193,5 @@ public class MainActivity extends AppCompatActivity {
         media.setText(String.format("%.2f", valorMedia / 12));
         maiorValor.setText(String.format("%.2f", valorMaior));
         menorValor.setText(String.format("%.2f", valorMenor));
-    }
-
-    private void limparValoresAntigos() {
-        valorTotal = 0.0;
-        valorMedia = 0.0;
-        valorMaior = -9999999999.0;
-        valorMenor = 99999999999.0;
-    }
-
-    private String validarMes(int i) {
-        String mes;
-
-        if (i < 10) {
-            mes = "0" + i;
-        } else {
-            mes = Integer.toString(i);
-        }
-
-        return mes;
     }
 }
