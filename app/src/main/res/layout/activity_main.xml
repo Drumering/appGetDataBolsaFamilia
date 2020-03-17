@@ -61,7 +61,32 @@
         android:layout_height="wrap_content">
 
         <TextView
-            android:id="@+id/textName"
+            android:id="@+id/nomeCidade"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:textSize="24sp" />
+
+        <TextView
+            android:id="@+id/valorTotalBolsa"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:textSize="24sp" />
+        <TextView
+            android:id="@+id/mediaBeneficiados"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:textSize="24sp" />
+        <TextView
+            android:id="@+id/maiorBolsa"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:textSize="24sp" />
+        <TextView
+            android:id="@+id/menorBolsa"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAlignment="center"

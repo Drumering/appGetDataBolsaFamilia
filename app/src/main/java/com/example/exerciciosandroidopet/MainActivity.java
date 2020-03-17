@@ -26,17 +26,26 @@ import static com.example.exerciciosandroidopet.Constants.MGS_ERRO_CONSULTA;
 
 public class MainActivity extends AppCompatActivity {
 
-    private TextView textView;
+    private TextView textViewNomeCidade, textViewnomeEstado, textViewValorTotalBolsa, textViewMediaBeneficiados, textViewMaiorBolsa, textViewMenorBolsa;
     private EditText editMunicipio, editYear;
+    private JSONObject results;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        textView = findViewById(R.id.textName);
+//        textViewNomeCidade = findViewById(R.id.nomeCidade);
+//        textViewnomeEstado = findViewById(R.id.nomeEstado);
+//        textViewValorTotalBolsa = findViewById(R.id.valorTotalBolsa);
+//        textViewMediaBeneficiados = findViewById(R.id.mediaBeneficiados);
+//        textViewMaiorBolsa = findViewById(R.id.maiorBolsa);
+//        textViewMenorBolsa = findViewById(R.id.menorBolsa);
+
         editMunicipio = findViewById(R.id.editMunicipio);
         editYear = findViewById(R.id.editYear);
+
+        results = new JSONObject();
     }
 
     public void btnCarregarIBGEEvent(View v) {
@@ -68,6 +77,11 @@ public class MainActivity extends AppCompatActivity {
 
                 generateRequest(endpoint, 0);
             }
+//            try{
+//                textViewNomeCidade.setText(results.get("nomeCidade").toString());
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
         }
     }
 
@@ -79,8 +93,67 @@ public class MainActivity extends AppCompatActivity {
                         public void onResponse(JSONArray response) {
                             try {
                                 // TODO: extrair valores para nome, estado do municipio,
-                                //  valor total pago, mes com maior e menor valores
-                                textView.setText(response.get(0).toString());
+                                //       valor total pago, mes com maior e menor valores
+                                //textView.setText(response.get(0).toString());
+                                JSONObject dataObject = response.getJSONObject(0);
+
+                                String nomeCidade = dataObject.getJSONObject("municipio").getString("nomeIBGE");
+                                String nomeEstado = dataObject.getJSONObject("municipio").getJSONObject("uf").getString("nome");
+                                String beneficiados = dataObject.getString("quantidadeBeneficiados");
+                                String valorBolsa = dataObject.getString("valor");
+
+                                results.put("nomeCidade", nomeCidade);
+
+                                results.put("nomeEstado", nomeEstado);
+
+                                int mediador = 0;
+
+                                try{
+                                    int incrementMediador = 1;
+                                    mediador = Integer.parseInt(results.getString("mediador")) + incrementMediador;
+                                    results.put("mediador", String.valueOf(mediador));
+                                }catch (Exception e){
+                                    results.put("mediador", String.valueOf(1));
+                                }
+
+                                Double x = Double.parseDouble(valorBolsa);
+                                Double y = 0.0;
+
+                                try {
+                                    y = Double.parseDouble(results.getString("valorBolsa"));
+                                }catch (Exception e){
+                                    y = Double.parseDouble(valorBolsa);
+                                }
+
+                                if(x >= y) {
+                                    results.put("maiorBolsa", Double.toString(x));
+                                }
+
+                                if(x <= y){
+                                    results.put("menorBolsa", Double.toString(x));
+                                }
+
+                                try{
+                                    Double valorTotal = Double.parseDouble(results.getString("valorTotal")) + Double.parseDouble(valorBolsa);
+                                    int mediaBeneficiados = Integer.parseInt(results.getString("mediaBeneficiados")) + Integer.parseInt(beneficiados);
+
+                                    mediaBeneficiados = mediaBeneficiados / mediador;
+                                    results.put("valorTotal", valorTotal.toString());
+                                    results.put("mediaBeneficiados", String.valueOf(mediaBeneficiados));
+                                }catch (Exception e){
+                                    results.put("valorTotal", valorBolsa);
+                                    results.put("mediaBeneficiados", beneficiados);
+                                }
+
+                                results.put("valorBolsa", valorBolsa);
+
+                                textViewNomeCidade.setText(results.get("nomeCidade").toString());
+//                                textViewnomeEstado.setText(results.get("nomeEstado").toString());
+//                                textViewMediaBeneficiados.setText(results.get("mediaBeneficiados").toString());
+//                                textViewValorTotalBolsa.setText(results.get("valorTotal").toString());
+//                                textViewMenorBolsa.setText(results.get("menorBolsa").toString());
+//                                textViewMaiorBolsa.setText(results.get("maiorBolsa").toString());
+
 
                             } catch (JSONException e) {
                                 e.printStackTrace();
