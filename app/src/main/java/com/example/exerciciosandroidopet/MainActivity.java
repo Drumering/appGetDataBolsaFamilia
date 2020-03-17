@@ -187,11 +187,11 @@ public class MainActivity extends AppCompatActivity {
 
     @SuppressLint("DefaultLocale")
     private void setTextosView() {
-        cidade.setText(nomeCidade);
-        estado.setText(UF);
-        total.setText(String.format("%.2f", valorTotal));
-        media.setText(String.format("%.2f", valorMedia / 12));
-        maiorValor.setText(String.format("%.2f", valorMaior));
-        menorValor.setText(String.format("%.2f", valorMenor));
+        cidade.setText("Nome da Cidade: " + nomeCidade);
+        estado.setText("Sigla do Estado: " + UF);
+        total.setText("Montante anual: R$" + String.format("%.2f", valorTotal));
+        media.setText("Media de beneficiados: " + String.format("%.2f", valorMedia / 12) + " pessoas");
+        maiorValor.setText("Menor valor cedido: R$" + String.format("%.2f", valorMaior));
+        menorValor.setText("Maior valor cedido: R$" + String.format("%.2f", valorMenor));
     }
 }
