@@ -26,26 +26,25 @@ import static com.example.exerciciosandroidopet.Constants.MGS_ERRO_CONSULTA;
 
 public class MainActivity extends AppCompatActivity {
 
-    private TextView textViewNomeCidade, textViewnomeEstado, textViewValorTotalBolsa, textViewMediaBeneficiados, textViewMaiorBolsa, textViewMenorBolsa;
+    private TextView cidade, estado, total, media, maiorValor, menorValor;
     private EditText editMunicipio, editYear;
-    private JSONObject results;
+    private Double valorTotal, valorMedia, valorMaior, valorMenor;
+    private String nomeCidade, UF;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-//        textViewNomeCidade = findViewById(R.id.nomeCidade);
-//        textViewnomeEstado = findViewById(R.id.nomeEstado);
-//        textViewValorTotalBolsa = findViewById(R.id.valorTotalBolsa);
-//        textViewMediaBeneficiados = findViewById(R.id.mediaBeneficiados);
-//        textViewMaiorBolsa = findViewById(R.id.maiorBolsa);
-//        textViewMenorBolsa = findViewById(R.id.menorBolsa);
+        cidade = findViewById(R.id.cidade);
+        estado = findViewById(R.id.estado);
+        total = findViewById(R.id.total);
+        media = findViewById(R.id.media);
+        maiorValor = findViewById(R.id.maiorValor);
+        menorValor = findViewById(R.id.menorValor);
 
         editMunicipio = findViewById(R.id.editMunicipio);
         editYear = findViewById(R.id.editYear);
-
-        results = new JSONObject();
     }
 
     public void btnCarregarIBGEEvent(View v) {
@@ -67,21 +66,21 @@ public class MainActivity extends AppCompatActivity {
         String codigoIbge = editMunicipio.getText().toString();
 
         if (validarDados(view, codigoIbge)) {
-            for (int i = 1; i <= 12; i++) {
-                String mes = validarMes(i);
+            limparValoresAntigos();
+            loopRequest(codigoIbge);
+        }
+    }
 
-                String dataConsulta = editYear.getText().toString() + mes;
-                String endpoint = String.format(API_DADOS_SITE + "?mesAno=%s&codigoIbge=%s&pagina=1",
-                        dataConsulta, codigoIbge
-                );
+    private void loopRequest(String codigoIbge) {
+        for (int i = 1; i <= 12; i++) {
+            String mes = validarMes(i);
 
-                generateRequest(endpoint, 0);
-            }
-//            try{
-//                textViewNomeCidade.setText(results.get("nomeCidade").toString());
-//            } catch (JSONException e) {
-//                e.printStackTrace();
-//            }
+            String dataConsulta = editYear.getText().toString() + mes;
+            String endpoint = String.format(API_DADOS_SITE + "?mesAno=%s&codigoIbge=%s&pagina=1",
+                    dataConsulta, codigoIbge
+            );
+
+            generateRequest(endpoint, 0);
         }
     }
 
@@ -89,71 +88,13 @@ public class MainActivity extends AppCompatActivity {
         if (operacao == 0) {
             JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(Request.Method.GET, url, null,
                     new Response.Listener<JSONArray>() {
+
                         @Override
                         public void onResponse(JSONArray response) {
                             try {
-                                // TODO: extrair valores para nome, estado do municipio,
-                                //       valor total pago, mes com maior e menor valores
-                                //textView.setText(response.get(0).toString());
                                 JSONObject dataObject = response.getJSONObject(0);
-
-                                String nomeCidade = dataObject.getJSONObject("municipio").getString("nomeIBGE");
-                                String nomeEstado = dataObject.getJSONObject("municipio").getJSONObject("uf").getString("nome");
-                                String beneficiados = dataObject.getString("quantidadeBeneficiados");
-                                String valorBolsa = dataObject.getString("valor");
-
-                                results.put("nomeCidade", nomeCidade);
-
-                                results.put("nomeEstado", nomeEstado);
-
-                                int mediador = 0;
-
-                                try{
-                                    int incrementMediador = 1;
-                                    mediador = Integer.parseInt(results.getString("mediador")) + incrementMediador;
-                                    results.put("mediador", String.valueOf(mediador));
-                                }catch (Exception e){
-                                    results.put("mediador", String.valueOf(1));
-                                }
-
-                                Double x = Double.parseDouble(valorBolsa);
-                                Double y = 0.0;
-
-                                try {
-                                    y = Double.parseDouble(results.getString("valorBolsa"));
-                                }catch (Exception e){
-                                    y = Double.parseDouble(valorBolsa);
-                                }
-
-                                if(x >= y) {
-                                    results.put("maiorBolsa", Double.toString(x));
-                                }
-
-                                if(x <= y){
-                                    results.put("menorBolsa", Double.toString(x));
-                                }
-
-                                try{
-                                    Double valorTotal = Double.parseDouble(results.getString("valorTotal")) + Double.parseDouble(valorBolsa);
-                                    int mediaBeneficiados = Integer.parseInt(results.getString("mediaBeneficiados")) + Integer.parseInt(beneficiados);
-
-                                    mediaBeneficiados = mediaBeneficiados / mediador;
-                                    results.put("valorTotal", valorTotal.toString());
-                                    results.put("mediaBeneficiados", String.valueOf(mediaBeneficiados));
-                                }catch (Exception e){
-                                    results.put("valorTotal", valorBolsa);
-                                    results.put("mediaBeneficiados", beneficiados);
-                                }
-
-                                results.put("valorBolsa", valorBolsa);
-
-                                textViewNomeCidade.setText(results.get("nomeCidade").toString());
-//                                textViewnomeEstado.setText(results.get("nomeEstado").toString());
-//                                textViewMediaBeneficiados.setText(results.get("mediaBeneficiados").toString());
-//                                textViewValorTotalBolsa.setText(results.get("valorTotal").toString());
-//                                textViewMenorBolsa.setText(results.get("menorBolsa").toString());
-//                                textViewMaiorBolsa.setText(results.get("maiorBolsa").toString());
-
+                                buscarValoresObjJson(dataObject);
+                                setTextosView();
 
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -189,6 +130,21 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void buscarValoresObjJson(JSONObject dataObject) throws JSONException {
+        valorTotal += Double.parseDouble(dataObject.getString("valor"));
+        valorMedia += Double.parseDouble(dataObject.getString("quantidadeBeneficiados"));
+        nomeCidade = dataObject.getJSONObject("municipio").getString("nomeIBGE");
+        UF = dataObject.getJSONObject("municipio").getJSONObject("uf").getString("nome");
+
+        double valorMensal = Double.parseDouble(dataObject.getString("valor"));
+        if(valorMaior <= valorMensal) {
+            valorMaior = valorMensal;
+        }
+        if (valorMenor >= valorMensal) {
+            valorMenor = valorMensal;
+        }
+    }
+
     private boolean validarDados(View view, String codigoIbge) {
         boolean municipioVazio = editMunicipio.getText().toString().trim().equals("");
         boolean anoVazio = editYear.getText().toString().trim().equals("");
@@ -206,6 +162,22 @@ public class MainActivity extends AppCompatActivity {
         } else {
             return true;
         }
+    }
+
+    private void setTextosView() {
+        cidade.setText(nomeCidade);
+        estado.setText(UF);
+        total.setText(String.format("%.2f", valorTotal));
+        media.setText(String.format("%.2f", valorMedia / 12));
+        maiorValor.setText(String.format("%.2f", valorMaior));
+        menorValor.setText(String.format("%.2f", valorMenor));
+    }
+
+    private void limparValoresAntigos() {
+        valorTotal = 0.0;
+        valorMedia = 0.0;
+        valorMaior = -9999999999.0;
+        valorMenor = 99999999999.0;
     }
 
     private String validarMes(int i) {
